@@ -112,18 +112,11 @@ public class Main {
         return filterCorePoints(figure, max, min);
     }
 
-    private static LinkedList<Point> filterCorePoints(LinkedList<Point> figure, Point max, Point min) {
-        return figure.stream()
-                .filter(e -> e.y() >= max.y() && e.y() <= min.y())
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
     private static boolean isOnLine(Point curr, Point next, Point e) {
-        return calculateDistance(curr, e) + calculateDistance(next, e) == calculateDistance(curr, next);
-    }
+        final var isOrientationZero = Orientation.ZERO.equals(calculateOrientation(curr, next, e));
+        if (!isOrientationZero) return false;
 
-    private static double calculateDistance(final Point first, final Point second) {
-        return Math.hypot(Math.abs(second.y() - first.y()), Math.abs(second.x() - first.x()));
+        return (curr.y() > next.y()) ? isBetweenPoints(next, curr, e) : isBetweenPoints(curr, next, e);
     }
 
     private static Optional<PointTuple> findBorderPoints(final LinkedList<Point> figure, final Point point) {
@@ -177,6 +170,23 @@ public class Main {
         return Orientation.getOrientation(orientation);
     }
 
+    private static Optional<Point> calculateIntersectionPoint(
+            final double slope1, final double b1, final double slope2, final double b2
+    ) {
+
+        if (Double.MIN_VALUE == b2) return Optional.of(new Point(slope2, b1));
+
+        final var divider = slope1 - slope2;
+        final double x = divider != 0 ? (b2 - b1) / divider : Double.MAX_VALUE;
+
+        if (Double.isNaN(x)) {
+            return Optional.empty();
+        }
+        final double y = slope1 * x + b1;
+
+        return Optional.of(new Point(x, y));
+    }
+
     private static boolean coreExists(final Point min, final Point max) {
         return min.y() >= max.y();
     }
@@ -197,6 +207,35 @@ public class Main {
         return isPrevGreater && next.y() > curr.y();
     }
 
+    private static Point calculateEquation(final PointTuple points) {
+        final var first = points.first();
+        final var second = points.second();
+
+        final double divider = second.x() - first.x();
+
+        if (divider == 0) return new Point(first.x(), Double.MIN_VALUE);
+
+        final var slope = (second.y() - first.y()) / divider;
+        final var b = first.y() - slope * first.x();
+        return new Point(slope, b);
+    }
+
+    private static LinkedList<Point> filterCorePoints(LinkedList<Point> figure, Point max, Point min) {
+        return figure.stream()
+                .filter(e -> e.y() >= max.y() && e.y() <= min.y())
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    private static Triplet findThreePoints(final LinkedList<Point> figure, final int index) {
+        final var firstPoint = figure.get(index);
+        final var iterator = figure.listIterator(index);
+        final int prevIndex = iterator.hasPrevious() ? iterator.previousIndex() : figure.size() - 1;
+        final var prevPoint = figure.get(prevIndex);
+        final var nextPoint = getNextPoint(figure, firstPoint);
+
+        return new Triplet(firstPoint, prevPoint, nextPoint);
+    }
+
     private static Point getNextPoint(final LinkedList<Point> figure, final Point point) {
         final int index = figure.indexOf(point);
         final int nextIndex = index + 1;
@@ -211,43 +250,7 @@ public class Main {
         return (first < point && second > point) || (first > point && second < point);
     }
 
-    private static Point calculateEquation(final PointTuple points) {
-        final var first = points.first();
-        final var second = points.second();
-
-        final double divider = second.x() - first.x();
-
-        if (divider == 0) return new Point(first.x(), Double.MIN_VALUE);
-
-        final var slope = (second.y() - first.y()) / divider;
-        final var b = first.y() - slope * first.x();
-        return new Point(slope, b);
-    }
-
-    private static Optional<Point> calculateIntersectionPoint(
-            final double slope1, final double b1, final double slope2, final double b2
-    ) {
-
-        if (Double.MIN_VALUE == b2) return Optional.of(new Point(slope2, b1));
-
-        final var divider = slope1 - slope2;
-        final double x = divider != 0 ? (b2 - b1) / divider : Double.MAX_VALUE;
-
-        if (Double.isNaN(x)) {
-            return Optional.empty();
-        }
-        final double y = slope1 * x + b1;
-
-        return Optional.of(new Point(x, y));
-    }
-
-    private static Triplet findThreePoints(final LinkedList<Point> figure, final int index) {
-        final var firstPoint = figure.get(index);
-        final var iterator = figure.listIterator(index);
-        final int prevIndex = iterator.hasPrevious() ? iterator.previousIndex() : figure.size() - 1;
-        final var prevPoint = figure.get(prevIndex);
-        final var nextPoint = getNextPoint(figure, firstPoint);
-
-        return new Triplet(firstPoint, prevPoint, nextPoint);
+    private static boolean isBetweenPoints(Point curr, Point next, Point e) {
+        return e.x() <= curr.x() && e.x() >= next.x() && e.y() >= curr.y() && e.y() <= next.y();
     }
 }
