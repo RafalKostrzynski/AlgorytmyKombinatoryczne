@@ -32,6 +32,19 @@ public final class FigureCreator {
         return new LinkedList<>(List.of(p1, p2, p3, p4, p5, p6, p7, p8));
     }
 
+    public static LinkedList<Point> createNWithLineCore() {
+        final var p1 = new Point(1, 1);
+        final var p2 = new Point(1, 5);
+        final var p3 = new Point(3, 5);
+        final var p4 = new Point(4, 2);
+        final var p5 = new Point(5, 5);
+        final var p6 = new Point(5, 1);
+        final var p7 = new Point(3, 1);
+        final var p8 = new Point(2, 2);
+
+        return new LinkedList<>(List.of(p1, p2, p3, p4, p5, p6, p7, p8));
+    }
+
     public static LinkedList<Point> createNWithCore() {
         final var p1 = new Point(1, 1);
         final var p2 = new Point(1, 5);

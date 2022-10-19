@@ -14,6 +14,10 @@ public class Main {
         calculate(hexagon);
 
         System.out.println("\nParametry jądra figury N bez jądra:");
+        final var nWithLineCore = FigureCreator.createNWithLineCore();
+        calculate(nWithLineCore);
+
+        System.out.println("\nParametry jądra figury N bez jądra:");
         final var nWithoutCore = FigureCreator.createNWithoutCore();
         calculate(nWithoutCore);
 
@@ -88,12 +92,7 @@ public class Main {
             return filterCorePoints(figure, max, min);
         }
 
-        final var listOfBorderPoints = new LinkedList<Point>();
-        borderPointsMin.ifPresent(pointTuple -> listOfBorderPoints.addAll(List.of(pointTuple.first(), pointTuple.second())));
-        borderPointsMax.ifPresent(pointTuple -> {
-            listOfBorderPoints.addFirst(pointTuple.first());
-            listOfBorderPoints.addLast(pointTuple.second());
-        });
+        final LinkedList<Point> listOfBorderPoints = getBorderPointsList(borderPointsMin, borderPointsMax);
 
         final var iterator = figure.listIterator();
         while (iterator.hasNext()) {
@@ -148,11 +147,11 @@ public class Main {
         final var sum = core.stream()
                 .map(curr -> {
                     final var next = getNextPoint(core, curr);
-                    return Math.abs(curr.x() * next.y() - curr.y() * next.x());
+                    return (curr.x() + next.x()) * (curr.y() - next.y());
                 }).reduce(Double::sum)
                 .orElse(0.0);
 
-        return sum / 2;
+        return Math.abs(sum / 2);
     }
 
     private static double calculatePerimeter(final LinkedList<Point> core) {
@@ -224,6 +223,34 @@ public class Main {
         return figure.stream()
                 .filter(e -> e.y() >= max.y() && e.y() <= min.y())
                 .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+
+    private static LinkedList<Point> getBorderPointsList(final Optional<PointTuple> borderPointsMin,
+                                                         final Optional<PointTuple> borderPointsMax) {
+        if (borderPointsMin.isPresent() && borderPointsMin.equals(borderPointsMax)) {
+            return new LinkedList<>(List.of(borderPointsMin.get().first(), borderPointsMin.get().second()));
+        }
+
+        final var listOfBorderPoints = new LinkedList<Point>();
+        borderPointsMin.ifPresent(pointTuple ->
+                {
+                    if (pointTuple.second().equals(pointTuple.first()))
+                        listOfBorderPoints.add(pointTuple.first());
+                    else
+                        listOfBorderPoints.addAll(List.of(pointTuple.first(), pointTuple.second()));
+                }
+        );
+        borderPointsMax.ifPresent(pointTuple -> {
+            if (pointTuple.second().equals(pointTuple.first()))
+                listOfBorderPoints.add(pointTuple.first());
+            else {
+                listOfBorderPoints.addFirst(pointTuple.first());
+                listOfBorderPoints.addLast(pointTuple.second());
+            }
+        });
+
+        return listOfBorderPoints;
     }
 
     private static Triplet findThreePoints(final LinkedList<Point> figure, final int index) {
