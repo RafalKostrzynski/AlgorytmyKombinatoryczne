@@ -1,9 +1,10 @@
 package pl.kostrzynski.model;
 
-public record Node(Point first, Point second, double distance) {
+import java.util.Objects;
+
+public record Node(Point first, Point second, double weight) {
 
     public boolean isSmallerOrEqualDistance(final Node that) {
-        return this.distance() <= that.distance();
+        return this.weight() <= that.weight();
     }
-
 }

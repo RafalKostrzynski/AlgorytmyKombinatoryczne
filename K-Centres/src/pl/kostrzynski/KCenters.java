@@ -19,10 +19,9 @@ public class KCenters {
         final List<Point> centers = new ArrayList<>();
         final ArrayList<Node> nodes = new ArrayList<>(
                 pointsList.stream()
-                        .map(e -> new Node(new Point(0, 0), new Point(0, 0), Double.MAX_VALUE))
+                        .map(e -> new Node(new Point(0, 0, 0), new Point(0, 0, 0), Double.MAX_VALUE))
                         .toList()
         );
-
 
         var maxDistancePoint = 0;
         for (int i = 0; i < k; i++) {

@@ -9,6 +9,6 @@ public final class DistanceBetweenPoints {
 
     public static double calculate(final Point a, final Point b) {
 
-        return Math.hypot(Math.abs(b.y() - a.y()), Math.abs(b.x() - a.x()));
+        return Math.sqrt(Math.pow(b.y() - a.y(), 2) + Math.pow(a.x() - b.x(), 2) + Math.pow(a.z() - b.z(), 2));
     }
 }

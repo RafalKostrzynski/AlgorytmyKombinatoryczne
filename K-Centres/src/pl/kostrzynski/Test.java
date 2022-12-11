@@ -26,7 +26,7 @@ public class Test {
         }
 
         // Index of city having the
-        // maximum distance to it's
+        // maximum weight to it's
         // closest center
         int max = 0;
         for(int i = 0; i < k; i++)
@@ -35,7 +35,7 @@ public class Test {
             for(int j = 0; j < n; j++)
             {
 
-                // Updating the distance
+                // Updating the weight
                 // of the cities to their
                 // closest centers
                 dist[j] = Math.min(dist[j],
@@ -44,11 +44,11 @@ public class Test {
 
             // Updating the index of the
             // city with the maximum
-            // distance to it's closest center
+            // weight to it's closest center
             max = maxindex(dist, n);
         }
 
-        // Printing the maximum distance
+        // Printing the maximum weight
         // of a city to a center
         // that is our answer
         System.out.println(dist[max]);

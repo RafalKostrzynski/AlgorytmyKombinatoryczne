@@ -3,6 +3,7 @@ package pl.kostrzynski.service;
 import pl.kostrzynski.model.Node;
 import pl.kostrzynski.model.Point;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -17,22 +18,21 @@ public final class FigureCreator {
     }
 
     public static List<Point> createPolygon() {
-        return IntStream.range(0, 100)
+        return IntStream.range(0, 33)
                 .mapToObj(e -> List.of(
-                                new Point(random.nextInt(0, 20), random.nextInt(0, 20)),
-                                new Point(random.nextInt(40, 60), random.nextInt(40, 60)),
-                                new Point(random.nextInt(80, 100), random.nextInt(80, 100))
+                                new Point(random.nextInt(0, 20), random.nextInt(0, 20), random.nextInt(0, 50)),
+                                new Point(random.nextInt(40, 60), random.nextInt(40, 60), random.nextInt(0, 50)),
+                                new Point(random.nextInt(80, 100), random.nextInt(80, 100), random.nextInt(0, 50))
                         )
                 )
                 .flatMap(List::stream)
                 .distinct()
-                .sorted(new PointXComparator())
                 .toList();
     }
 
     public static Map<Point, List<Node>> createMap(final List<Point> points) {
 
-        return points.stream()
+        final var map = points.stream()
                 .collect(Collectors.toMap(
                                 point -> point, point -> points.stream()
                                         .map(e -> new Node(
@@ -43,6 +43,13 @@ public final class FigureCreator {
                                         .toList()
                         )
                 );
+
+        var sortedMap = new LinkedHashMap<Point, List<Node>>();
+        map.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey(new PointXComparator()))
+                .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+        return sortedMap;
     }
 
 }
