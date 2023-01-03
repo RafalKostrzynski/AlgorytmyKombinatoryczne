@@ -39,4 +39,14 @@ public final class FigureCreator {
         return distanceMatrix;
     }
 
+    public static double[][] createGraph4() {
+
+        return new double[][]{
+                {0, 30, 8, 25},
+                {30, 0, 17, 19},
+                {8, 17, 0, 21},
+                {25, 19, 21, 0}
+        };
+    }
+
 }

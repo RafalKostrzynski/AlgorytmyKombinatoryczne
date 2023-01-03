@@ -6,14 +6,15 @@ public class Main {
 
     public static void main(String[] args) {
 
-//        final var graph = FigureCreator.createGraph1();
-        final var graph = FigureCreator.createGraph2();
+        final var graph = FigureCreator.createGraph1();
+//        final var graph = FigureCreator.createGraph2();
 //        final var graph = FigureCreator.createGraph3();
+//        final var graph = FigureCreator.createGraph4();
 
-        final var travelingSalesman = new TravelingSalesman(graph);
-        final var cycle = travelingSalesman.findCycle();
+        final var tsp = new TravelingSalesman(graph);
+        final var result = tsp.calculate();
 
-        System.out.println(cycle);
+        System.out.println(result);
     }
 
 }
