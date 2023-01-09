@@ -19,7 +19,7 @@ public class KCenters {
         final var centers = new ArrayList<>(List.of(firstPoint));
         pointsList.remove(firstPoint);
 
-        var distances = getDistanceToEveryPoint(pointsList, pointsList.get(0));
+        var distances = getDistanceToEveryPoint(pointsList, centers.get(0));
 
         for (int i = 0; i < k - 1; i++) {
             int maxIndex = 0;
