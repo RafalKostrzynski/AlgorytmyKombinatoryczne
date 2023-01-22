@@ -6,6 +6,9 @@ import pl.kostrzynski.service.DistanceBetweenPoints;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RandomizedClosestPair {
 
@@ -41,50 +44,52 @@ public class RandomizedClosestPair {
                 grid.clear();
                 grid = new Grid(delta);
                 grid.addPoint(pi);
+//                grid.addPoints(points);
             }
         }
         return new PointPair(first, second, delta);
     }
 
     private class Grid {
-        private final ArrayList<ArrayList<ArrayList<Point>>> blocks;
         private final double delta;
+        private Map<Point, ArrayList<Point>> pointMap;
 
         public Grid(double delta) {
             this.delta = delta;
-            blocks = new ArrayList<>();
+            pointMap = new HashMap<>();
+        }
+
+        void addPoints(List<Point> points) {
+            points.forEach(this::addPoint);
         }
 
         void addPoint(Point p) {
             int x = (int) (p.x() / delta);
             int y = (int) (p.y() / delta);
 
-            if (blocks.size() <= x) {
-                for (int i = blocks.size(); i <= x; i++) {
-                    blocks.add(new ArrayList<>());
-                }
+            final var point = new Point(x, y);
+            if (pointMap.containsKey(point)) {
+                pointMap.get(point).add(p);
+            } else {
+                pointMap.put(point, new ArrayList<>(List.of(p)));
             }
-            if (blocks.get(x).size() <= y) {
-                for (int i = blocks.get(x).size(); i <= y; i++) {
-                    blocks.get(x).add(new ArrayList<>());
-                }
-            }
-
-            blocks.get(x).get(y).add(p);
         }
 
         double minDistToNeighbors(Point p, double minDist) {
             int x = (int) (p.x() / delta);
             int y = (int) (p.y() / delta);
 
-            for (int i = Math.max(0, x - 1); i <= Math.min(blocks.size() - 1, x + 1); i++) {
-                for (int j = Math.max(0, y - 1); j <= Math.min(blocks.get(i).size() - 1, y + 1); j++) {
-                    for (Point q : blocks.get(i).get(j)) {
-                        double dist = DistanceBetweenPoints.calculate(p, q);
-                        if (dist < minDist) {
+            for (int i = Math.max(0, x - 1); i <= x + 1; i++) {
+                for (int j = Math.max(0, y - 1); j <= y + 1; j++) {
+                    final var points = pointMap.get(new Point(i, j));
+                    if (points == null) continue;
+                    for (final var w : points) {
+                        if (p.equals(w)) continue;
+                        double dist = DistanceBetweenPoints.calculate(p, w);
+                        if (dist != 0 && dist < minDist) {
                             minDist = dist;
                             first = p;
-                            second = q;
+                            second = w;
                         }
                     }
                 }
@@ -93,7 +98,7 @@ public class RandomizedClosestPair {
         }
 
         void clear() {
-            blocks.clear();
+            pointMap = new HashMap<>();
         }
 
     }
