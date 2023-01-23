@@ -41,10 +41,10 @@ public class RandomizedClosestPair {
             if (delta == oldDelta) {
                 grid.addPoint(pi);
             } else {
-                grid.clear();
                 grid = new Grid(delta);
-                grid.addPoint(pi);
-//                grid.addPoints(points);
+                grid.addPoints(points);
+//                grid.addPoint(first);
+//                grid.addPoint(second);
             }
         }
         return new PointPair(first, second, delta);
@@ -52,32 +52,42 @@ public class RandomizedClosestPair {
 
     private class Grid {
         private final double delta;
-        private Map<Point, ArrayList<Point>> pointMap;
+        private final Map<Point, ArrayList<Point>> pointMap;
 
         public Grid(double delta) {
             this.delta = delta;
             pointMap = new HashMap<>();
         }
 
-        void addPoints(List<Point> points) {
+        void addPoints(List<Point>points){
             points.forEach(this::addPoint);
         }
 
         void addPoint(Point p) {
-            int x = (int) (p.x() / delta);
-            int y = (int) (p.y() / delta);
 
-            final var point = new Point(x, y);
-            if (pointMap.containsKey(point)) {
-                pointMap.get(point).add(p);
+            final Point index = calculateIndex(p);
+            if (pointMap.containsKey(index)) {
+                pointMap.get(index).add(p);
             } else {
-                pointMap.put(point, new ArrayList<>(List.of(p)));
+                pointMap.put(index, new ArrayList<>(List.of(p)));
             }
         }
 
+        private Point calculateIndex(Point p) {
+            int xStar = (int) ((int)(p.x() / delta) * p.x());
+            int yStar = (int) ((int)(p.y() / delta) * p.y());
+
+            int x = (int) (xStar / delta);
+            int y = (int) (yStar / delta);
+
+            return new Point(x, y);
+        }
+
         double minDistToNeighbors(Point p, double minDist) {
-            int x = (int) (p.x() / delta);
-            int y = (int) (p.y() / delta);
+
+            final Point index = calculateIndex(p);
+            final int x = (int) index.x();
+            final int y = (int) index.y();
 
             for (int i = Math.max(0, x - 1); i <= x + 1; i++) {
                 for (int j = Math.max(0, y - 1); j <= y + 1; j++) {
@@ -96,10 +106,5 @@ public class RandomizedClosestPair {
             }
             return minDist;
         }
-
-        void clear() {
-            pointMap = new HashMap<>();
-        }
-
     }
 }

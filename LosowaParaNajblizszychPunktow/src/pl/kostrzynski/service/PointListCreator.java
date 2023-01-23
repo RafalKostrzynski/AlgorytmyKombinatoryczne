@@ -15,10 +15,21 @@ public class PointListCreator {
     }
 
     public static List<Point> createRandomPoints() {
-        return IntStream.range(0, 1000).mapToObj(e ->
-                        new Point(random.nextInt(10000), random.nextInt(10000))
-                ).distinct()
-                .toList();
+
+        final var p1 = new Point(3,0);
+        final var p2 = new Point(0,2);
+        final var p3 = new Point(3,3);
+        final var p4 = new Point(1,2);
+        final var p5 = new Point(2,4);
+        final var p6 = new Point(0,0);
+        final var p7 = new Point(3,2);
+        final var p8 = new Point(1,3);
+        return List.of(p1, p2, p3, p4, p5,p6,p7,p8);
+
+//        return IntStream.range(0, 10).mapToObj(e ->
+//                        new Point(random.nextInt(5), random.nextInt(5))
+//                ).distinct()
+//                .toList();
     }
 
     public static List<Point> sortPoints(List<Point> points) {
