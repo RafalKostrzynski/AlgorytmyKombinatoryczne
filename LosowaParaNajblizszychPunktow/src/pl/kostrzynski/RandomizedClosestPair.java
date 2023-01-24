@@ -4,11 +4,7 @@ import pl.kostrzynski.model.Point;
 import pl.kostrzynski.model.PointPair;
 import pl.kostrzynski.service.DistanceBetweenPoints;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RandomizedClosestPair {
 
@@ -41,10 +37,8 @@ public class RandomizedClosestPair {
             if (delta == oldDelta) {
                 grid.addPoint(pi);
             } else {
-                grid.clear();
                 grid = new Grid(delta);
-                grid.addPoint(pi);
-//                grid.addPoints(points);
+                grid.addPoints(points.subList(0, i));
             }
         }
         return new PointPair(first, second, delta);
@@ -52,11 +46,10 @@ public class RandomizedClosestPair {
 
     private class Grid {
         private final double delta;
-        private Map<Point, ArrayList<Point>> pointMap;
+        private final Map<Point, ArrayList<Point>> pointMap = new HashMap<>();
 
         public Grid(double delta) {
             this.delta = delta;
-            pointMap = new HashMap<>();
         }
 
         void addPoints(List<Point> points) {
@@ -95,10 +88,6 @@ public class RandomizedClosestPair {
                 }
             }
             return minDist;
-        }
-
-        void clear() {
-            pointMap = new HashMap<>();
         }
 
     }
